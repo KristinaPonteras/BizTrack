@@ -10,7 +10,7 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
+        User::firstOrCreate(
             ['email' => 'admin@biztrack.com'],
             [
                 'name' => 'BizTrack Administrator',
