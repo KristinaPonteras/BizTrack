@@ -14,10 +14,26 @@ class BizTrackSampleDataSeeder extends Seeder
                 ->where('email', 'admin@biztrack.com')
                 ->first();
 
-            $category = DB::table('categories')->first();
+            if (!$user) {
+                throw new \RuntimeException('Administrator not found.');
+            }
 
-            if (!$user || !$category) {
-                throw new \RuntimeException('Administrator or category not found.');
+            // Create the default category if it does not exist.
+            $category = DB::table('categories')
+                ->where('category_name', 'Beverages')
+                ->first();
+
+            if (!$category) {
+                $categoryId = DB::table('categories')->insertGetId([
+                    'category_name' => 'Beverages',
+                    'description' => 'Beverage products',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $category = DB::table('categories')
+                    ->where('id', $categoryId)
+                    ->first();
             }
 
             $paymentMethods = ['cash', 'card', 'e_wallet', 'bank_transfer'];
