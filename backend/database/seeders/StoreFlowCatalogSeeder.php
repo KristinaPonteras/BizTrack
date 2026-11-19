@@ -10,7 +10,7 @@ class StoreFlowCatalogSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
-            // Identify only records created by the old sample seeder.
+            // Identify records created by the old sample seeder.
             $sampleProductIds = DB::table('products')
                 ->where('sku', 'like', 'BT-SAMPLE-%')
                 ->pluck('id');
@@ -20,14 +20,22 @@ class StoreFlowCatalogSeeder extends Seeder
                 ->pluck('id');
 
             if ($sampleSaleIds->isNotEmpty()) {
-                DB::table('sale_items')->whereIn('sale_id', $sampleSaleIds)->delete();
-                DB::table('sales')->whereIn('id', $sampleSaleIds)->delete();
+                DB::table('sale_items')
+                    ->whereIn('sale_id', $sampleSaleIds)
+                    ->delete();
+
+                DB::table('sales')
+                    ->whereIn('id', $sampleSaleIds)
+                    ->delete();
             }
 
             if ($sampleProductIds->isNotEmpty()) {
                 DB::table('stock_movements')
                     ->whereIn('product_id', $sampleProductIds)
-                    ->whereIn('reference_type', ['sample_opening_stock', 'sample_sale'])
+                    ->whereIn('reference_type', [
+                        'sample_opening_stock',
+                        'sample_sale'
+                    ])
                     ->delete();
             }
 
@@ -35,8 +43,7 @@ class StoreFlowCatalogSeeder extends Seeder
                 ->where('expense_name', 'like', 'Sample Expense %')
                 ->delete();
 
-            // Remove old sample products only when no remaining sale item refers to them.
-            // Products linked to other sales are retained and renamed below where possible.
+            // StoreFlow product catalog.
             $catalog = [
                 ['Beverages', 'Coca-Cola Original Taste 1.5L', 'SF-CAT-0001'],
                 ['Beverages', 'Sprite 1.5L', 'SF-CAT-0002'],
@@ -81,7 +88,47 @@ class StoreFlowCatalogSeeder extends Seeder
                 ['School Supplies', 'Corona Yellow Pad Paper', 'SF-CAT-0035'],
             ];
 
-            $categoryIds = [];
+            // Estimated prices in Philippine pesos.
+            // Format: SKU => [cost price, selling price]
+            $prices = [
+                'SF-CAT-0001' => [48, 55],
+                'SF-CAT-0002' => [48, 55],
+                'SF-CAT-0003' => [47, 54],
+                'SF-CAT-0004' => [18, 22],
+                'SF-CAT-0005' => [17, 20],
+                'SF-CAT-0006' => [7, 9],
+                'SF-CAT-0007' => [17, 20],
+                'SF-CAT-0008' => [17, 20],
+                'SF-CAT-0009' => [9, 12],
+                'SF-CAT-0010' => [9, 12],
+                'SF-CAT-0011' => [8, 10],
+                'SF-CAT-0012' => [8, 10],
+                'SF-CAT-0013' => [18, 22],
+                'SF-CAT-0014' => [38, 45],
+                'SF-CAT-0015' => [30, 36],
+                'SF-CAT-0016' => [18, 22],
+                'SF-CAT-0017' => [17, 21],
+                'SF-CAT-0018' => [11, 14],
+                'SF-CAT-0019' => [12, 15],
+                'SF-CAT-0020' => [28, 35],
+                'SF-CAT-0021' => [10, 13],
+                'SF-CAT-0022' => [22, 27],
+                'SF-CAT-0023' => [8, 10],
+                'SF-CAT-0024' => [65, 75],
+                'SF-CAT-0025' => [55, 65],
+                'SF-CAT-0026' => [10, 13],
+                'SF-CAT-0027' => [25, 30],
+                'SF-CAT-0028' => [12, 15],
+                'SF-CAT-0029' => [18, 22],
+                'SF-CAT-0030' => [10, 13],
+                'SF-CAT-0031' => [20, 25],
+                'SF-CAT-0032' => [8, 10],
+                'SF-CAT-0033' => [12, 15],
+                'SF-CAT-0034' => [10, 13],
+                'SF-CAT-0035' => [25, 30],
+            ];
+
+            // Category descriptions.
             $categoryDescriptions = [
                 'Beverages' => 'Drinks and beverage products',
                 'Snacks' => 'Packaged snacks and crackers',
@@ -91,6 +138,9 @@ class StoreFlowCatalogSeeder extends Seeder
                 'Household Supplies' => 'Cleaning and household essentials',
                 'School Supplies' => 'Basic school and stationery supplies',
             ];
+
+            // Create categories if they do not exist.
+            $categoryIds = [];
 
             foreach ($categoryDescriptions as $name => $description) {
                 $category = DB::table('categories')
@@ -111,26 +161,42 @@ class StoreFlowCatalogSeeder extends Seeder
                 $categoryIds[$name] = $id;
             }
 
+            // Insert new products or update existing catalog products.
+            // Existing stock quantities are NOT changed.
             foreach ($catalog as [$categoryName, $productName, $sku]) {
-                $existing = DB::table('products')->where('sku', $sku)->first();
+                [$costPrice, $sellingPrice] = $prices[$sku];
 
-                if (!$existing) {
-                    DB::table('products')->insert([
-                        'category_id' => $categoryIds[$categoryName],
-                        'product_name' => $productName,
-                        'sku' => $sku,
-                        'cost_price' => 0,
-                        'selling_price' => 0,
-                        'stock_quantity' => 0,
-                        'reorder_level' => 10,
-                        'status' => 'active',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                $existing = DB::table('products')
+                    ->where('sku', $sku)
+                    ->first();
+
+                $productData = [
+                    'category_id' => $categoryIds[$categoryName],
+                    'product_name' => $productName,
+                    'cost_price' => $costPrice,
+                    'selling_price' => $sellingPrice,
+                    'updated_at' => now(),
+                ];
+
+                if ($existing) {
+                    DB::table('products')
+                        ->where('id', $existing->id)
+                        ->update($productData);
+                } else {
+                    DB::table('products')->insert(array_merge(
+                        $productData,
+                        [
+                            'sku' => $sku,
+                            'stock_quantity' => 0,
+                            'reorder_level' => 10,
+                            'status' => 'active',
+                            'created_at' => now(),
+                        ]
+                    ));
                 }
             }
 
-            // Remove legacy sample products that no longer have sale history.
+            // Remove legacy sample products only when no sale item refers to them.
             if ($sampleProductIds->isNotEmpty()) {
                 $stillReferenced = DB::table('sale_items')
                     ->whereIn('product_id', $sampleProductIds)
@@ -138,43 +204,57 @@ class StoreFlowCatalogSeeder extends Seeder
                     ->unique();
 
                 $safeToDelete = $sampleProductIds->diff($stillReferenced);
+
                 if ($safeToDelete->isNotEmpty()) {
-                    DB::table('products')->whereIn('id', $safeToDelete)->delete();
+                    DB::table('products')
+                        ->whereIn('id', $safeToDelete)
+                        ->delete();
                 }
 
-                // Preserve any sample-labelled product tied to non-sample sale history.
-                // Rename it so the sample placeholder is no longer displayed.
+                // Preserve sample products connected to other sale history.
                 foreach ($sampleProductIds->diff($safeToDelete) as $productId) {
-                    $product = DB::table('products')->where('id', $productId)->first();
+                    $product = DB::table('products')
+                        ->where('id', $productId)
+                        ->first();
+
                     if (!$product) {
                         continue;
                     }
 
-                    $number = (int) substr((string) $product->sku, strlen('BT-SAMPLE-'));
+                    $number = (int) substr(
+                        (string) $product->sku,
+                        strlen('BT-SAMPLE-')
+                    );
+
                     if ($number >= 1 && $number <= count($catalog)) {
                         [$categoryName, $productName] = $catalog[$number - 1];
-                        DB::table('products')->where('id', $productId)->update([
-                            'category_id' => $categoryIds[$categoryName],
-                            'product_name' => $productName,
-                            'sku' => 'SF-LEGACY-' . str_pad((string) $number, 4, '0', STR_PAD_LEFT),
-                            'updated_at' => now(),
-                        ]);
+
+                        DB::table('products')
+                            ->where('id', $productId)
+                            ->update([
+                                'category_id' => $categoryIds[$categoryName],
+                                'product_name' => $productName,
+                                'sku' => 'SF-LEGACY-' . str_pad(
+                                    (string) $number,
+                                    4,
+                                    '0',
+                                    STR_PAD_LEFT
+                                ),
+                                'updated_at' => now(),
+                            ]);
                     } else {
-                        DB::table('products')->where('id', $productId)->update([
-                            'product_name' => 'Archived Product ' . $number,
-                            'status' => 'inactive',
-                            'updated_at' => now(),
-                        ]);
+                        DB::table('products')
+                            ->where('id', $productId)
+                            ->update([
+                                'product_name' => 'Archived Product ' . $number,
+                                'status' => 'inactive',
+                                'updated_at' => now(),
+                            ]);
                     }
                 }
             }
 
-            // Delete the old Beverages category only if it is genuinely unused.
-            $oldBeverages = DB::table('categories')
-                ->where('category_name', 'Beverages')
-                ->first();
-
-            // Beverages is retained as a valid category in the new catalog.
+            // Keep the Beverages category because it is part of the catalog.
         });
     }
 }
