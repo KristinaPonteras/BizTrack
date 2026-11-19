@@ -10,7 +10,7 @@ php artisan config:clear
 echo "Running database migrations..."
 php artisan migrate --force
 
-echo "Seeding BizTrack database..."
+echo "Running StoreFlow database seeders..."
 php artisan db:seed --force
 
 echo "Starting Apache..."
