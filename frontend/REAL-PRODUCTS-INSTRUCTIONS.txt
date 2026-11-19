@@ -1,0 +1,19 @@
+StoreFlow — Real Product Catalogue
+
+This catalogue contains named, commercially sold branded products (not generic placeholder products).
+
+Categories:
+- Beverages
+- Snacks
+- Canned Goods
+- Instant Foods
+- Personal Care
+- Household Supplies
+- School Supplies
+
+Important:
+- Product names and brands are real retail items.
+- Selling prices and quantities are intentionally blank. Enter the actual price and on-hand quantity from the store or a verified supplier/retailer; do not guess.
+- Package sizes and product variants can differ by retailer and location, so verify the exact variant before creating the live record.
+- This CSV is a data-entry guide. It does not automatically insert records into the live database.
+- Add categories first, then add products through StoreFlow's Products page, or import the CSV only if your app has a supported import feature.

@@ -1,0 +1,38 @@
+﻿﻿Category,Product Name,SKU,Cost Price (PHP),Selling Price (PHP),Stock Quantity,Reorder Level
+Beverages,Purified Water 500 mL,BEV-001,8,12,48,12
+Beverages,Cola Soft Drink 1.5 L,BEV-002,48,62,18,6
+Beverages,Orange Juice 250 mL,BEV-003,14,20,24,8
+Beverages,Lemon-Lime Soda 1.5 L,BEV-004,46,60,16,5
+Beverages,Ready-to-Drink Iced Tea 350 mL,BEV-005,18,25,20,6
+Beverages,Instant Coffee Sachet,BEV-006,5,8,60,15
+Snacks,Potato Chips 60 g,SNK-001,18,25,30,10
+Snacks,Cheese Crackers 10-pack,SNK-002,16,22,24,8
+Snacks,Chocolate Wafer Bar,SNK-003,9,13,36,12
+Snacks,Butter Cookies Small Pack,SNK-004,12,18,24,8
+Snacks,Roasted Peanuts 40 g,SNK-005,10,15,20,6
+Snacks,Cheese Rings Snack 55 g,SNK-006,17,24,18,6
+Canned Goods,Canned Sardines 155 g,CAN-001,20,27,24,8
+Canned Goods,Canned Tuna 150 g,CAN-002,28,36,18,6
+Canned Goods,Corned Beef 150 g,CAN-003,36,45,18,6
+Canned Goods,Luncheon Meat 170 g,CAN-004,32,42,15,5
+Canned Goods,Canned Meat Loaf 150 g,CAN-005,25,33,16,5
+Instant Foods,Instant Noodles Chicken,INS-001,12,16,40,12
+Instant Foods,Instant Noodles Beef,INS-002,12,16,40,12
+Instant Foods,Instant Pancit Canton,INS-003,14,19,30,10
+Instant Foods,Instant Soup Cup,INS-004,19,26,18,6
+Instant Foods,Macaroni Pasta 200 g,INS-005,24,32,14,5
+Personal Care,Bath Soap 90 g,PER-001,18,25,20,6
+Personal Care,Shampoo Sachet 12 mL,PER-002,6,9,50,15
+Personal Care,Toothpaste 50 mL,PER-003,32,42,14,5
+Personal Care,Toothbrush Medium,PER-004,18,25,16,5
+Personal Care,Deodorant Sachet,PER-005,8,12,24,8
+Household Supplies,Dishwashing Liquid 250 mL,HOU-001,28,38,12,4
+Household Supplies,Laundry Detergent Sachet,HOU-002,7,10,40,12
+Household Supplies,Fabric Conditioner Sachet,HOU-003,6,9,36,10
+Household Supplies,Facial Tissue Small Pack,HOU-004,16,22,18,6
+Household Supplies,Garbage Bags Small Roll,HOU-005,22,30,12,4
+School Supplies,Writing Notebook 80 Leaves,SCH-001,24,32,20,6
+School Supplies,Black Ballpoint Pen,SCH-002,6,10,50,15
+School Supplies,Pencil HB,SCH-003,5,8,40,12
+School Supplies,Eraser,SCH-004,4,7,30,10
+School Supplies,Bond Paper 10-sheet Pack,SCH-005,18,25,15,5

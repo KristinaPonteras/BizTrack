@@ -53,7 +53,7 @@ function Login({ onLogin }: LoginProps) {
                     <Store size={30} />
                 </div>
 
-                <h1>Welcome to BizTrack</h1>
+                <h1>Welcome to StoreFlow</h1>
                 <p className="login-subtitle">
                     Sign in to manage your business.
                 </p>
@@ -100,7 +100,7 @@ function Login({ onLogin }: LoginProps) {
                 </form>
 
                 <p className="login-footer">
-                    BizTrack Business Management System
+                    StoreFlow Business Management System
                 </p>
             </div>
         </div>

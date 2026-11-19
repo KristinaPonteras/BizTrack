@@ -357,7 +357,7 @@ function Sales() {
                 <div className="sales-card-header">
                     <div>
                         <h2>Sales Transaction History</h2>
-                        <p>Recent sales recorded in BizTrack.</p>
+                        <p>Recent sales recorded in StoreFlow.</p>
                     </div>
 
                     <div className="sales-search">
